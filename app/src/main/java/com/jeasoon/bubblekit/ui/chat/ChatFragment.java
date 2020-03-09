@@ -75,6 +75,7 @@ public class ChatFragment extends Fragment implements ChatConstant {
     public void onPause() {
         super.onPause();
         mChatViewModel.onPause();
+        mChatViewModel.setCachedInput(etInput.getText().toString());
     }
 
     private void findViews() {
@@ -130,6 +131,12 @@ public class ChatFragment extends Fragment implements ChatConstant {
                         }
                     });
                 }
+            }
+        });
+        mChatViewModel.getCachedInput().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                etInput.setText(s);
             }
         });
         String chatSessionName = getViewModel().getChatSessionName();

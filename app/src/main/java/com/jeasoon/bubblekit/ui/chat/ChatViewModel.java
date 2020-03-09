@@ -23,12 +23,14 @@ import java.util.Objects;
 public class ChatViewModel extends ViewModel implements ChatMsgReceiver {
 
     private MutableLiveData<List<Message>> mMessageList;
+    private MutableLiveData<String> mCachedInput;
     private ChatSession mChatSession;
     private NotificationSession mNotificationSession;
     private Person mSelf;
     private boolean isResumed;
 
     public ChatViewModel() {
+        mCachedInput = new MutableLiveData<>();
         mMessageList = new MutableLiveData<>();
         mMessageList.setValue(new ArrayList<Message>());
         mSelf = getSelfPerson();
@@ -72,6 +74,14 @@ public class ChatViewModel extends ViewModel implements ChatMsgReceiver {
         chatMessage.setMessage(msg);
         chatMessage.setTimestamp(System.currentTimeMillis());
         mChatSession.postSendMsg(chatMessage);
+    }
+
+    public void setCachedInput(String cachedInput) {
+        mCachedInput.postValue(cachedInput);
+    }
+
+    public LiveData<String> getCachedInput() {
+        return mCachedInput;
     }
 
     public LiveData<List<Message>> getMessageList() {
