@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">气泡工具</string>
+    <string name="title_self">我</string>
+    <string name="title_friend">朋友</string>
+    <string name="title_group">群组</string>
+    <string name="channel_name_bubble_on">气泡通知</string>
+    <string name="channel_name_bubble_off">无气泡通知</string>
+    <string name="hint_input" tools:ignore="TypographyEllipsis">输入一些内容吧...</string>
+    <string name="notification_menu_orientation_portrait">竖屏</string>
+    <string name="notification_menu_orientation_landscape">横屏</string>
+    <string name="notification_menu_screen_normal">普通</string>
+    <string name="notification_menu_screen_full">全屏</string>
+    <string name="notification_menu_bubble_enable">气泡</string>
+    <string name="notification_menu_bubble_service">服务</string>
+    <string name="bubble_error_send_empty_message">不能发送空信息</string>
+</resources>

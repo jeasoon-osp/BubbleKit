@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_notification_orientation_portrait"
+        android:title="@string/notification_menu_orientation_portrait"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_notification_orientation_landscape"
+        android:title="@string/notification_menu_orientation_landscape"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_notification_screen_normal"
+        android:title="@string/notification_menu_screen_normal"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_notification_screen_full"
+        android:title="@string/notification_menu_screen_full"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_notification_bubble_enable"
+        android:checkable="true"
+        android:title="@string/notification_menu_bubble_enable"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_notification_bubble_service"
+        android:checkable="true"
+        android:title="@string/notification_menu_bubble_service"
+        app:showAsAction="never" />
+
+</menu>

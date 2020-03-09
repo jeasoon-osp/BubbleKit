@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_self"
+        android:icon="@drawable/ic_self_black_24dp"
+        android:title="@string/title_self" />
+
+    <item
+        android:id="@+id/navigation_friend"
+        android:icon="@drawable/ic_friend_black_24dp"
+        android:title="@string/title_friend" />
+
+    <item
+        android:id="@+id/navigation_group"
+        android:icon="@drawable/ic_group_black_24dp"
+        android:title="@string/title_group" />
+
+</menu>
