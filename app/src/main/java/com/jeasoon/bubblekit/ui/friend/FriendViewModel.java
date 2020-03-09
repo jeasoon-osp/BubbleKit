@@ -2,7 +2,7 @@ package com.jeasoon.bubblekit.ui.friend;
 
 import android.app.Person;
 
-import com.jeasoon.bubblekit.data.PersonFactory;
+import com.jeasoon.bubblekit.data.PersonManager;
 import com.jeasoon.bubblekit.ui.chat.ChatViewModel;
 
 import java.util.ArrayList;
@@ -12,13 +12,13 @@ public class FriendViewModel extends ChatViewModel {
 
     @Override
     protected Person getSelfPerson() {
-        return PersonFactory.getInstance().getFriendPerson();
+        return PersonManager.getInstance().getFriendPerson();
     }
 
     @Override
     protected List<Person> getChatPeople() {
         List<Person> friendList = new ArrayList<>();
-        friendList.add(PersonFactory.getInstance().getSelfPerson());
+        friendList.add(PersonManager.getInstance().getSelfPerson());
         return friendList;
     }
 

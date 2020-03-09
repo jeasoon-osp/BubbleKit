@@ -46,8 +46,8 @@ public class ChatSession {
         mChatDispatcher.postSendMsg(this, chatMessage, delay, isDummy);
     }
 
-    public void postReceiveMsg(ChatMsgReceiveRunnable runnable) {
-        mChatDispatcher.postReceiveMsg(this, runnable);
+    public void setChatMsgReceiver(ChatMsgReceiver runnable) {
+        mChatDispatcher.setChatMsgReceiver(this, runnable);
     }
 
     public Person getSelf() {
@@ -60,8 +60,8 @@ public class ChatSession {
         return people;
     }
 
-    void dispatchMessage(ChatMsgReceiveRunnable runnable, ChatMessage chatMessage) {
-        runnable.onReceiveMessage(mHostPerson, chatMessage, mHostPerson != chatMessage.getSender());
+    void dispatchMessage(ChatMsgReceiver runnable, ChatMessage chatMessage) {
+        runnable.onReceiveMessage(mHostPerson, chatMessage, getSelf() != chatMessage.getSender());
     }
 
 }

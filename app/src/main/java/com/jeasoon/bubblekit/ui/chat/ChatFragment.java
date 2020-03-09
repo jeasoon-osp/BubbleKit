@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -13,19 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jeasoon.bubblekit.R;
-import com.jeasoon.bubblekit.data.PoetryManager;
-import com.jeasoon.bubblekit.data.PersonFactory;
+import com.jeasoon.bubblekit.constant.ChatConstant;
+import com.jeasoon.bubblekit.ui.viewmodel.ChatViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements ChatConstant {
 
     private EditText etInput;
     private ImageButton btnSend;
@@ -34,6 +34,16 @@ public class ChatFragment extends Fragment {
     private List<Message> mMessageList;
     private MessageAdapter mMessageAdapter;
     private ChatViewModel mChatViewModel;
+    private String mViewModelName;
+    private boolean isNotificationActivity;
+
+    public ChatFragment() {
+    }
+
+    public ChatFragment(String viewModelName) {
+        mViewModelName = viewModelName;
+        isNotificationActivity = true;
+    }
 
     @Nullable
     @Override
@@ -46,6 +56,25 @@ public class ChatFragment extends Fragment {
         findViews();
         initData();
         initView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mChatViewModel.onResume(isNotificationActivity);
+        etInput.post(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = Objects.requireNonNull(getContext()).getSystemService(InputMethodManager.class);
+                Objects.requireNonNull(imm).hideSoftInputFromWindow(etInput.getWindowToken(), 0);
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mChatViewModel.onPause();
     }
 
     private void findViews() {
@@ -61,14 +90,6 @@ public class ChatFragment extends Fragment {
         mChatViewModel = getViewModel();
         mMessageList = new ArrayList<>();
         mMessageAdapter = new MessageAdapter(mMessageList);
-    }
-
-    private ChatViewModel getViewModel() {
-        return ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(getViewModelClass());
-    }
-
-    protected Class<? extends ChatViewModel> getViewModelClass() {
-        return ChatViewModel.class;
     }
 
     private void initView() {
@@ -111,6 +132,22 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
+        String chatSessionName = getViewModel().getChatSessionName();
+        if (!TextUtils.isEmpty(chatSessionName)) {
+            getActivity().setTitle(chatSessionName);
+        }
+    }
+
+    private ChatViewModel getViewModel() {
+        if (mChatViewModel != null) {
+            return mChatViewModel;
+        }
+        mViewModelName = mViewModelName != null ? mViewModelName : getViewModelClass().getName();
+        return ChatViewModelProvider.getInstance().get(mViewModelName);
+    }
+
+    protected Class<? extends ChatViewModel> getViewModelClass() {
+        return ChatViewModel.class;
     }
 
 }

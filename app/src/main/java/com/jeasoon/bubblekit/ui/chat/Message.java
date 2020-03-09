@@ -8,6 +8,7 @@ public class Message {
     private Person receiver;
     private Person sender;
     private String content;
+    private long timestamp;
 
     public boolean isIncoming() {
         return incoming;
@@ -41,4 +42,11 @@ public class Message {
         this.content = content;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 }

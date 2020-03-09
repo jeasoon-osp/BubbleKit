@@ -23,15 +23,21 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_notification_bubble_service"
+        android:checkable="true"
+        android:title="@string/notification_menu_bubble_service"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_notification_bubble_enable"
         android:checkable="true"
         android:title="@string/notification_menu_bubble_enable"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_notification_bubble_service"
+        android:id="@+id/menu_notification_bubble_reply"
         android:checkable="true"
-        android:title="@string/notification_menu_bubble_service"
+        android:title="@string/notification_menu_bubble_reply"
         app:showAsAction="never" />
 
 </menu>

@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Random;
 
 public class PoetryManager {
 
@@ -14,6 +15,7 @@ public class PoetryManager {
     private int mPoetryIndex;
 
     private PoetryData mPoetryData;
+    private Random mRandom;
 
     private PoetryManager() {
     }
@@ -28,6 +30,7 @@ public class PoetryManager {
 
     public void init(Context context) {
         try {
+            mRandom = new Random(System.currentTimeMillis() + System.nanoTime());
             mPoetryData = new Gson().fromJson(new InputStreamReader(context.getAssets().open("poet.tang.30000.json")), PoetryData.class);
             mPoetrySize = mPoetryData.data.size();
         } catch (IOException e) {
@@ -36,6 +39,14 @@ public class PoetryManager {
     }
 
     public Poetry next() {
+        return nextRandom();
+    }
+
+    public Poetry nextRandom() {
+        return mPoetryData.data.get(mRandom.nextInt(mPoetrySize));
+    }
+
+    public Poetry nextOrdered() {
         if (mPoetryIndex >= mPoetrySize) {
             mPoetryIndex = 0;
         }

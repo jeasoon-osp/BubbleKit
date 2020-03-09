@@ -16,28 +16,29 @@ class ChatDispatcher {
     }
 
     static ChatDispatcher getInstance() {
-        return ChatDispatcher.ChatDispatcherHolder.INSTANCE;
+        return ChatDispatcherHolder.INSTANCE;
     }
 
-    private Handler mMsgHandler = new Handler(Looper.getMainLooper());
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private Map<ChatSession, Queue<Runnable>> mChatSessionTaskMap = new HashMap<>();
-    private Map<ChatSession, Queue<ChatMessage>> mChatSessionMessageMap = new HashMap<>();
-    private Map<ChatSession, Queue<ChatMsgReceiveRunnable>> mChatSessionRunnableMap = new HashMap<>();
-    private OnChatMessageSentListener mOnChatMessageSentListener;
+    private Map<ChatSession, ChatMsgReceiver> mChatSessionReceiveRunnableMap = new HashMap<>();
+    private ChatMessageExchangeSender mSender;
+    private ChatMessageExchangeReceiver mReceiver;
+    private ChatMessageExchangeInterceptor mInterceptor;
 
     void clear() {
-        mMsgHandler.post(new Runnable() {
+        mHandler.post(new Runnable() {
             @Override
             public void run() {
                 for (Queue<Runnable> runnableQueue : mChatSessionTaskMap.values()) {
                     for (Runnable runnable : runnableQueue) {
-                        mMsgHandler.removeCallbacks(runnable);
+                        mHandler.removeCallbacks(runnable);
                     }
                 }
                 mChatSessionTaskMap.clear();
-                mChatSessionMessageMap.clear();
-                mChatSessionRunnableMap.clear();
-                mOnChatMessageSentListener = null;
+                mChatSessionReceiveRunnableMap.clear();
+                mInterceptor = null;
+                mReceiver = null;
             }
         });
     }
@@ -46,16 +47,11 @@ class ChatDispatcher {
         Queue<Runnable> tasks = mChatSessionTaskMap.get(chatSession);
         if (tasks != null) {
             for (Runnable runnable : tasks) {
-                mMsgHandler.removeCallbacks(runnable);
+                mHandler.removeCallbacks(runnable);
             }
         }
         mChatSessionTaskMap.remove(chatSession);
-        mChatSessionMessageMap.remove(chatSession);
-        mChatSessionRunnableMap.remove(chatSession);
-    }
-
-    void setOnChatMessageSentListener(OnChatMessageSentListener onChatMessageSentListener) {
-        mOnChatMessageSentListener = onChatMessageSentListener;
+        mChatSessionReceiveRunnableMap.remove(chatSession);
     }
 
     void postSendMsg(final ChatSession chatSession, final ChatMessage chatMessage, long delay, final boolean isDummy) {
@@ -63,54 +59,46 @@ class ChatDispatcher {
             @Override
             public void run() {
                 Objects.requireNonNull(mChatSessionTaskMap.get(chatSession)).remove(this);
-                Queue<ChatMessage> queue = mChatSessionMessageMap.get(chatSession);
-                if (queue == null) {
-                    queue = new LinkedList<>();
-                    mChatSessionMessageMap.put(chatSession, queue);
+                if (mInterceptor != null && mInterceptor.onChatMessageSent(chatSession, chatMessage, isDummy)) {
+                    return;
                 }
-                queue.offer(chatMessage);
-                if (mOnChatMessageSentListener != null) {
-                    mOnChatMessageSentListener.onChatMessageSent(chatSession, chatMessage, isDummy);
+                if (mSender != null) {
+                    mSender.onSend(ChatDispatcher.this, chatSession, chatMessage, isDummy, mReceiver);
                 }
-                checkDispatchMessage(chatSession);
             }
         };
-        mMsgHandler.postDelayed(task, delay);
+        mHandler.postDelayed(task, delay);
         recordPendingTask(chatSession, task);
     }
 
-    void postReceiveMsg(final ChatSession chatSession, final ChatMsgReceiveRunnable runnable) {
+    void postReceiveMsg(final ChatSession chatSession, final ChatMessage chatMessage, final boolean isDummy) {
         Runnable task = new Runnable() {
             @Override
             public void run() {
                 Objects.requireNonNull(mChatSessionTaskMap.get(chatSession)).remove(this);
-                Queue<ChatMsgReceiveRunnable> queue = mChatSessionRunnableMap.get(chatSession);
-                if (queue == null) {
-                    queue = new LinkedList<>();
-                    mChatSessionRunnableMap.put(chatSession, queue);
+                if (mInterceptor != null && mInterceptor.onChatMessageSent(chatSession, chatMessage, isDummy)) {
+                    return;
                 }
-                queue.offer(runnable);
-                checkDispatchMessage(chatSession);
+                ChatMsgReceiver receiver = mChatSessionReceiveRunnableMap.get(chatSession);
+                if (receiver != null) {
+                    chatSession.dispatchMessage(receiver, chatMessage);
+                }
             }
         };
-        mMsgHandler.post(task);
+        mHandler.post(task);
         recordPendingTask(chatSession, task);
     }
 
-    private void checkDispatchMessage(ChatSession chatSession) {
-        Queue<ChatMessage> msgQueue = mChatSessionMessageMap.get(chatSession);
-        Queue<ChatMsgReceiveRunnable> runnableQueue = mChatSessionRunnableMap.get(chatSession);
-        if (msgQueue == null || runnableQueue == null) {
-            return;
-        }
-        while (true) {
-            if (msgQueue.isEmpty() || runnableQueue.isEmpty()) {
-                return;
+    void setChatMsgReceiver(final ChatSession chatSession, final ChatMsgReceiver receiver) {
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                Objects.requireNonNull(mChatSessionTaskMap.get(chatSession)).remove(this);
+                mChatSessionReceiveRunnableMap.put(chatSession, receiver);
             }
-            ChatMessage chatMessage = msgQueue.poll();
-            ChatMsgReceiveRunnable chatRunnable = runnableQueue.poll();
-            chatSession.dispatchMessage(Objects.requireNonNull(chatRunnable), chatMessage);
-        }
+        };
+        mHandler.post(task);
+        recordPendingTask(chatSession, task);
     }
 
     private void recordPendingTask(ChatSession chatSession, Runnable task) {
@@ -122,8 +110,22 @@ class ChatDispatcher {
         sessionPendingTaskQueue.add(task);
     }
 
-    interface OnChatMessageSentListener {
-        void onChatMessageSent(ChatSession chatSession, ChatMessage chatMessage, boolean isDummy);
+    void setChatMessageExchangeSender(ChatMessageExchangeSender sender) {
+        mSender = sender;
+    }
+
+    void setChatMessageExchangeReceiver(ChatMessageExchangeReceiver receiver) {
+        mReceiver = receiver;
+    }
+
+    void setOnChatMessageSentListener(ChatMessageExchangeInterceptor chatMessageExchangeInterceptor) {
+        mInterceptor = chatMessageExchangeInterceptor;
+    }
+
+    interface ChatMessageExchangeInterceptor {
+        boolean onChatMessageSent(ChatSession chatSession, ChatMessage chatMessage, boolean isDummy);
+
+        boolean onChatMessageReceived(ChatSession chatSession, ChatMessage chatMessage, boolean isDummy);
     }
 
 }

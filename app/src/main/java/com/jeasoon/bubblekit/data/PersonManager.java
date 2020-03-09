@@ -10,27 +10,27 @@ import com.jeasoon.bubblekit.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersonFactory {
+public class PersonManager {
 
     private Person mSelfPerson;
     private Person mFriendPerson;
     private List<Person> mGroupPerson;
 
-    private PersonFactory() {
+    private PersonManager() {
     }
 
-    private static class PersonFactoryHolder {
+    private static class PersonManagerHolder {
         @SuppressLint("StaticFieldLeak")
-        private static final PersonFactory INSTANCE = new PersonFactory();
+        private static final PersonManager INSTANCE = new PersonManager();
     }
 
-    public static PersonFactory getInstance() {
-        return PersonFactoryHolder.INSTANCE;
+    public static PersonManager getInstance() {
+        return PersonManagerHolder.INSTANCE;
     }
 
     public void init(Context context) {
         mGroupPerson = new ArrayList<>();
-        mGroupPerson.add(createPerson(context, true, R.drawable.cat, "Dog", "dog"));
+        mGroupPerson.add(createPerson(context, true, R.drawable.dog, "Dog", "dog"));
         mGroupPerson.add(createPerson(context, false, R.drawable.parrot, "Parrot", "parrot"));
         mGroupPerson.add(createPerson(context, true, R.drawable.sheep, "Sheep", "sheep"));
         mSelfPerson = createPerson(context, false, R.drawable.cat, "Cat", "cat");

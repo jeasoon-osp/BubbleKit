@@ -6,6 +6,8 @@ public class NotificationMessage {
 
     private String message;
     private long timestamp;
+    private boolean read;
+    private boolean incoming;
     private Person person;
 
     public String getMessage() {
@@ -22,6 +24,22 @@ public class NotificationMessage {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
+    public boolean isIncoming() {
+        return incoming;
+    }
+
+    public void setIncoming(boolean incoming) {
+        this.incoming = incoming;
     }
 
     public Person getPerson() {

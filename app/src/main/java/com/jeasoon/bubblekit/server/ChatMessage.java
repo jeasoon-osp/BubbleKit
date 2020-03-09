@@ -6,6 +6,7 @@ public class ChatMessage {
 
     private Person sender;
     private String message;
+    private long timestamp;
 
     public Person getSender() {
         return sender;
@@ -23,11 +24,20 @@ public class ChatMessage {
         this.message = message;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String toString() {
         return "ChatMessage{" +
                 "sender=" + sender +
                 ", message='" + message + '\'' +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }
