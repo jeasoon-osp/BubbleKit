@@ -1,6 +1,8 @@
 package com.jeasoon.bubblekit;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.jeasoon.bubblekit.data.PersonManager;
 import com.jeasoon.bubblekit.data.PoetryManager;
@@ -22,11 +24,32 @@ public class BubbleKit {
     }
 
     private int mInitCount;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public void init(Context context) {
         if (mInitCount++ > 0) {
             return;
         }
+        mHandler.removeCallbacks(mDestroyRunnable);
+        doInit(context);
+    }
+
+    public void destroy() {
+        if (--mInitCount > 0) {
+            return;
+        }
+        mHandler.postDelayed(mDestroyRunnable, 5000);
+    }
+
+    private Runnable mDestroyRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            doDestroy();
+        }
+    };
+
+    private void doInit(Context context) {
         ChatServer.getInstance().start();
         PoetryManager.getInstance().init(context);
         PersonManager.getInstance().init(context);
@@ -34,10 +57,7 @@ public class BubbleKit {
         NotificationEmitter.getInstance().init(context);
     }
 
-    public void destroy() {
-        if (--mInitCount > 0) {
-            return;
-        }
+    private void doDestroy() {
         ChatServer.getInstance().clear();
         PoetryManager.getInstance().clear();
         PersonManager.getInstance().clear();

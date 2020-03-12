@@ -39,6 +39,7 @@ class ChatDispatcher {
                 mChatSessionReceiveRunnableMap.clear();
                 mInterceptor = null;
                 mReceiver = null;
+                mSender = null;
             }
         });
     }
@@ -110,16 +111,31 @@ class ChatDispatcher {
         sessionPendingTaskQueue.add(task);
     }
 
-    void setChatMessageExchangeSender(ChatMessageExchangeSender sender) {
-        mSender = sender;
+    void setChatMessageExchangeSender(final ChatMessageExchangeSender sender) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mSender = sender;
+            }
+        });
     }
 
-    void setChatMessageExchangeReceiver(ChatMessageExchangeReceiver receiver) {
-        mReceiver = receiver;
+    void setChatMessageExchangeReceiver(final ChatMessageExchangeReceiver receiver) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mReceiver = receiver;
+            }
+        });
     }
 
-    void setOnChatMessageSentListener(ChatMessageExchangeInterceptor chatMessageExchangeInterceptor) {
-        mInterceptor = chatMessageExchangeInterceptor;
+    void setOnChatMessageSentListener(final ChatMessageExchangeInterceptor chatMessageExchangeInterceptor) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mInterceptor = chatMessageExchangeInterceptor;
+            }
+        });
     }
 
     interface ChatMessageExchangeInterceptor {
