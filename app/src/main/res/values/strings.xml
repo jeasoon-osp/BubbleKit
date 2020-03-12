@@ -13,6 +13,7 @@
     <string name="notification_menu_bubble_enable">气泡</string>
     <string name="notification_menu_bubble_service">服务</string>
     <string name="notification_menu_bubble_reply">回复</string>
+    <string name="notification_menu_bubble_expand">自动展开</string>
     <string name="bubble_error_send_empty_message">不能发送空信息</string>
     <string name="bubble_remote_input_reply">回复</string>
 </resources>

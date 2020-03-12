@@ -7,6 +7,8 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import com.jeasoon.bubblekit.BubbleKit;
+
 public class BubbleChatService extends Service {
 
     @SuppressLint("StaticFieldLeak")
@@ -19,6 +21,7 @@ public class BubbleChatService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        BubbleKit.getInstance().init(this);
         sInstance = this;
     }
 
@@ -31,6 +34,7 @@ public class BubbleChatService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        BubbleKit.getInstance().destroy();
         sInstance = null;
     }
 }

@@ -33,6 +33,7 @@ public class NotificationEmitter {
     private String mBubbleChannelId;
     private boolean isUsingService;
     private boolean isReplyEnabled;
+    private boolean isAutoExpandEnabled;
     private BroadcastReceiver mReceiver;
     private Set<Integer> mSentIdSet;
 
@@ -59,6 +60,14 @@ public class NotificationEmitter {
         initBroadcast();
     }
 
+    public void clear() {
+        clearBroadcast();
+        mCtx = null;
+        mNM = null;
+        mBubbleChannelId = null;
+        mSentIdSet = null;
+    }
+
     private void initBroadcast() {
         if (mReceiver != null) {
             return;
@@ -67,6 +76,14 @@ public class NotificationEmitter {
         filter.addAction(ChatConstant.ACTION_CHAT_REMOTE_INPUT_RECEIVER);
         mReceiver = new BubbleChatBroadcastReceiver();
         mCtx.registerReceiver(mReceiver, filter);
+    }
+
+    private void clearBroadcast() {
+        if (mReceiver == null) {
+            return;
+        }
+        mCtx.unregisterReceiver(mReceiver);
+        mReceiver = null;
     }
 
     private void initChannels() {
@@ -126,6 +143,18 @@ public class NotificationEmitter {
 
     public boolean isReplyEnabled() {
         return isReplyEnabled;
+    }
+
+    public void enableAutoExpand() {
+        isAutoExpandEnabled = true;
+    }
+
+    public void disableAutoExpand() {
+        isAutoExpandEnabled = false;
+    }
+
+    public boolean isAutoExpandEnabled() {
+        return isAutoExpandEnabled;
     }
 
     void cancelNotification(NotificationSession session) {
@@ -229,6 +258,7 @@ public class NotificationEmitter {
         bubbleBuilder.setIntent(session.getActivityPendingIntent(mCtx))
                 .setIcon(Objects.requireNonNull(msgHost.getIcon()))
                 .setSuppressNotification(lastMsg == null || !lastMsg.isIncoming())
+                .setAutoExpandBubble(isAutoExpandEnabled() && lastMsg != null && lastMsg.isIncoming())
                 .setDesiredHeight(600);
         builder.setBubbleMetadata(bubbleBuilder.build());
     }

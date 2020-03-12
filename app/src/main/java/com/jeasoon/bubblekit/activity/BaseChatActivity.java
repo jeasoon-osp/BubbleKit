@@ -6,14 +6,28 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.jeasoon.bubblekit.BubbleKit;
 import com.jeasoon.bubblekit.R;
 import com.jeasoon.bubblekit.constant.ChatConstant;
 import com.jeasoon.bubblekit.notification.NotificationEmitter;
 import com.jeasoon.bubblekit.util.ScreenUtil;
 
 public abstract class BaseChatActivity extends AppCompatActivity implements ChatConstant {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BubbleKit.getInstance().init(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BubbleKit.getInstance().destroy();
+    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -43,6 +57,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
             menu.findItem(R.id.menu_notification_bubble_enable).setChecked(NotificationEmitter.getInstance().isBubbleEnabled());
             menu.findItem(R.id.menu_notification_bubble_service).setChecked(NotificationEmitter.getInstance().isServiceEnabled());
             menu.findItem(R.id.menu_notification_bubble_reply).setChecked(NotificationEmitter.getInstance().isReplyEnabled());
+            menu.findItem(R.id.menu_notification_bubble_expand).setChecked(NotificationEmitter.getInstance().isAutoExpandEnabled());
         }
         return super.onMenuOpened(featureId, menu);
     }
@@ -84,6 +99,14 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
                     NotificationEmitter.getInstance().enableReply();
                 } else {
                     NotificationEmitter.getInstance().disableReply();
+                }
+                return true;
+            case R.id.menu_notification_bubble_expand:
+                item.setChecked(!item.isChecked());
+                if (item.isChecked()) {
+                    NotificationEmitter.getInstance().enableAutoExpand();
+                } else {
+                    NotificationEmitter.getInstance().disableAutoExpand();
                 }
                 return true;
         }

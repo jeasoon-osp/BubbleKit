@@ -1,8 +1,8 @@
 package com.jeasoon.bubblekit.data;
 
-import android.annotation.SuppressLint;
 import android.app.Person;
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Icon;
 
 import com.jeasoon.bubblekit.R;
@@ -20,7 +20,6 @@ public class PersonManager {
     }
 
     private static class PersonManagerHolder {
-        @SuppressLint("StaticFieldLeak")
         private static final PersonManager INSTANCE = new PersonManager();
     }
 
@@ -37,6 +36,12 @@ public class PersonManager {
         mFriendPerson = createPerson(context, false, R.drawable.sheep, "Sheep", "sheep");
     }
 
+    public void clear() {
+        mGroupPerson = null;
+        mSelfPerson = null;
+        mFriendPerson = null;
+    }
+
     public Person getSelfPerson() {
         return mSelfPerson;
     }
@@ -49,10 +54,13 @@ public class PersonManager {
         return mGroupPerson;
     }
 
-    private Person createPerson(Context context, boolean isBot, int icon, String name, String key) {
+    private Person createPerson(Context context, boolean isBot, int iconId, String name, String key) {
+        Icon icon = Icon.createWithResource(context, iconId);
+        icon.setTintMode(PorterDuff.Mode.DST);
         return new Person.Builder()
                 .setBot(isBot)
-                .setIcon(Icon.createWithResource(context, icon))
+                .setKey(key)
+                .setIcon(icon)
                 .setName(name)
                 .build();
     }

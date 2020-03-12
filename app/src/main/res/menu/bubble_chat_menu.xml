@@ -40,4 +40,10 @@
         android:title="@string/notification_menu_bubble_reply"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_notification_bubble_expand"
+        android:checkable="true"
+        android:title="@string/notification_menu_bubble_expand"
+        app:showAsAction="never" />
+
 </menu>

@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 public class ChatViewModelProvider extends ViewModelProvider {
 
+    private static final ViewModelStore sViewModelStore = new ViewModelStore();
+
     private static class ChatViewModelProviderHolder {
         private static final ChatViewModelProvider INSTANCE = new ChatViewModelProvider();
     }
@@ -21,9 +23,16 @@ public class ChatViewModelProvider extends ViewModelProvider {
             @NonNull
             @Override
             public ViewModelStore getViewModelStore() {
-                return new ViewModelStore();
+                return sViewModelStore;
             }
         });
+    }
+
+    public void init(){
+    }
+
+    public void clear(){
+        sViewModelStore.clear();
     }
 
     @NonNull

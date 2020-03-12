@@ -1,6 +1,6 @@
 package com.jeasoon.bubblekit.data;
 
-import androidx.annotation.NonNull;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -18,9 +18,16 @@ public class Poetry {
 //        "id": "9a280978-cd68-4d49-bf3a-d197d5b0bd63"
 //    }
 
+    @SerializedName("author")
     private String author;
+
+    @SerializedName("paragraphs")
     private List<String> paragraphs;
+
+    @SerializedName("title")
     private String title;
+
+    @SerializedName("id")
     private String id;
 
     public String getAuthor() {

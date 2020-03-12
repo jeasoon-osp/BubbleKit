@@ -17,7 +17,7 @@ public class ChatServer {
         ChatDispatcher.getInstance().setChatMessageExchangeReceiver(new DummyChatMessageExchangeReceiver());
     }
 
-    public void shutdown() {
+    public void clear() {
         ChatDispatcher.getInstance().clear();
     }
 

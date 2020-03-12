@@ -3,6 +3,7 @@ package com.jeasoon.bubblekit.data;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,6 +39,13 @@ public class PoetryManager {
         }
     }
 
+    public void clear() {
+        mPoetrySize = 0;
+        mPoetryIndex = 0;
+        mRandom = null;
+        mPoetryData = null;
+    }
+
     public Poetry next() {
         return nextRandom();
     }
@@ -54,6 +62,8 @@ public class PoetryManager {
     }
 
     public static class PoetryData {
+
+        @SerializedName("data")
         private List<Poetry> data;
 
         public List<Poetry> getData() {
