@@ -17,16 +17,27 @@ import com.jeasoon.bubblekit.util.ScreenUtil;
 
 public abstract class BaseChatActivity extends AppCompatActivity implements ChatConstant {
 
+    private static final boolean sIsChangingConfigurations = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BubbleKit.getInstance().init(this);
+        if (getLastNonConfigurationInstance() == null) {
+            BubbleKit.getInstance().init(this);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BubbleKit.getInstance().destroy();
+        if (!isChangingConfigurations()) {
+            BubbleKit.getInstance().destroy();
+        }
+    }
+
+    @Override
+    public final Object onRetainCustomNonConfigurationInstance() {
+        return sIsChangingConfigurations;
     }
 
     @Override
