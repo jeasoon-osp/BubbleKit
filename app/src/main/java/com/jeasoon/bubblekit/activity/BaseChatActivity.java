@@ -3,7 +3,6 @@ package com.jeasoon.bubblekit.activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,43 +16,16 @@ import com.jeasoon.bubblekit.util.ScreenUtil;
 
 public abstract class BaseChatActivity extends AppCompatActivity implements ChatConstant {
 
-    private static final boolean sIsChangingConfigurations = true;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getLastNonConfigurationInstance() == null) {
-            BubbleKit.getInstance().init(this);
-        }
+        BubbleKit.getInstance().init(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (!isChangingConfigurations()) {
-            BubbleKit.getInstance().destroy();
-        }
-    }
-
-    @Override
-    public final Object onRetainCustomNonConfigurationInstance() {
-        return sIsChangingConfigurations;
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(EXTRA_SCREEN, (getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.getBoolean(EXTRA_SCREEN)) {
-            ScreenUtil.setScreenFull(this);
-        } else {
-            ScreenUtil.setScreenNormal(this);
-        }
+        BubbleKit.getInstance().destroy();
     }
 
     @Override

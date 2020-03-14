@@ -1,12 +1,10 @@
 package com.jeasoon.bubblekit.ui.chat;
 
-import android.app.Person;
 import android.content.res.ColorStateList;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,7 +43,7 @@ public class MessageAdapter extends ListAdapter<Message, MessageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Message message = mMessageList.get(position);
         if (tintColorIncoming == null) {
             tintColorIncoming = ColorStateList.valueOf(ContextCompat.getColor(holder.tvMsg.getContext(), R.color.message_incoming));
@@ -66,7 +64,6 @@ public class MessageAdapter extends ListAdapter<Message, MessageAdapter.ViewHold
         holder.tvMsg.setText(message.getContent());
         holder.tvMsg.setBackgroundResource(message.isIncoming() ? R.drawable.message_incoming : R.drawable.message_outgoing);
         ViewCompat.setBackgroundTintList(holder.tvMsg, message.isIncoming() ? tintColorIncoming : tintColorOutgoing);
-        holder.tvMsg.setGravity(message.isIncoming() ? Gravity.START : Gravity.END);
         holder.tvMsg.setPadding(
                 message.isIncoming() ? padding_horizontal_long : padding_horizontal_short,
                 padding_vertical,
@@ -76,6 +73,14 @@ public class MessageAdapter extends ListAdapter<Message, MessageAdapter.ViewHold
         lp.leftToLeft = message.isIncoming() ? R.id.tv_name : -1;
         lp.rightToRight = !message.isIncoming() ? R.id.tv_name : -1;
         holder.tvMsg.setLayoutParams(lp);
+        if (holder.tvMsg.getMaxWidth() == Integer.MAX_VALUE) {
+            holder.tvMsg.post(new Runnable() {
+                @Override
+                public void run() {
+                    holder.tvMsg.setMaxWidth(holder.tvName.getWidth());
+                }
+            });
+        }
     }
 
     @Override

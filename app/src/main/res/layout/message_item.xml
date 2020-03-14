@@ -39,7 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="#000"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_name"
         app:layout_constraintRight_toRightOf="@+id/tv_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
