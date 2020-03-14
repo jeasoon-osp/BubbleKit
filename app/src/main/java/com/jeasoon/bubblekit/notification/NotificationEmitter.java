@@ -193,7 +193,7 @@ public class NotificationEmitter {
         // 创建 NotificationBuilder
         List<NotificationMessage> msgList = session.getMsgList();
         Notification.Builder builder = new Notification.Builder(mCtx, mBubbleChannelId);
-        builder.setSmallIcon(msgList.size() != 1 ? Icon.createWithResource(mCtx, R.drawable.ic_friend_black_24dp) : msgList.get(0).getPerson().getIcon())
+        builder.setSmallIcon(msgList.size() != 1 ? Icon.createWithResource(mCtx, R.drawable.ic_launcher) : msgList.get(0).getPerson().getIcon())
                 .setContentIntent(session.getActivityPendingIntent(mCtx));
         return builder;
     }
